@@ -57,6 +57,7 @@ class ResumeOptimizer:
             'cloud': r'\b(aws|azure|gcp|docker|kubernetes|jenkins|git)\b',
             'databases': r'\b(postgresql|mysql|mongodb|redis|snowflake|oracle)\b',
             'data_tools': r'\b(spark|hadoop|kafka|tableau|power bi|looker)\b',
+            'networking': r'\b(cisco|routing|switching|tcp/ip|dns|dhcp|network|connectivity|service desk|troubleshooting|configuration|documentation)\b',
             'concepts': r'\b(machine learning|data science|devops|microservices|ci/cd|agile|scrum)\b'
         }
         
@@ -73,8 +74,11 @@ class ResumeOptimizer:
         data_engineering_indicators = ['data engineer', 'etl', 'pipeline', 'spark', 'hadoop', 'kafka']
         data_analyst_indicators = ['data analyst', 'analytics', 'bi', 'tableau', 'power bi']
         software_engineer_indicators = ['software engineer', 'full stack', 'react', 'frontend', 'backend']
+        network_engineer_indicators = ['network engineer', 'cisco', 'routing', 'switching', 'tcp/ip', 'dns', 'dhcp', 'network connectivity', 'service desk', 'troubleshooting']
         
-        if any(term in kw_str for term in data_engineering_indicators):
+        if any(term in kw_str for term in network_engineer_indicators):
+            return 'network_engineer'
+        elif any(term in kw_str for term in data_engineering_indicators):
             return 'data_engineering'
         elif any(term in kw_str for term in data_analyst_indicators):
             return 'data_analyst'
@@ -126,6 +130,20 @@ class ResumeOptimizer:
 \\textbf{Cloud \\& Infrastructure}{: AWS, Docker, Kubernetes, Git, CI/CD pipelines, Microservices} \\\\
 \\textbf{Databases}{: SQL, MySQL, PostgreSQL, MongoDB, NoSQL, Database design, API development} \\\\
 \\textbf{Tools \\& Frameworks}{: Git, Jira, VS Code, Postman, Django, Flask, Agile methodology}
+}}
+\\end{itemize}"""
+            return skills_section
+        
+        elif job_type == 'network_engineer':
+            skills_section = """%----------TECHNICAL SKILLS----------%
+\\section{Technical Skills}
+\\begin{itemize}[leftmargin=0.15in, label={}]
+\\small{\\item{
+\\textbf{Networking}{: TCP/IP, OSI Model, Routing \\& Switching, DNS, DHCP, HTTP, NAT, BGP, Subnetting, Network Connectivity} \\\\
+\\textbf{Network Tools}{: Cisco IOS, Network Diagnostics, ping, traceroute, Wireshark, Service Desk Management} \\\\
+\\textbf{Programming}{: Python, Bash/Shell Scripting, Network Automation, Configuration Management} \\\\
+\\textbf{Operating Systems}{: Linux, Windows, MacOS, Network Troubleshooting, System Administration} \\\\
+\\textbf{Tools \\& Documentation}{: Git, Jira, Network Documentation, Inventory Management, Ticket Resolution}
 }}
 \\end{itemize}"""
             return skills_section
@@ -380,45 +398,50 @@ def main():
     print("🎯 ATS Resume Optimizer")
     print("=" * 50)
     
-    # Initialize
+    # Try to read job description from quick_optimizer.py first
+    job_description, job_title = read_job_from_quick_optimizer()
+    
+    if not job_description:
+        # Fallback to interactive mode
+        print("\n📋 Instructions:")
+        print("1. Paste your job description below")
+        print("2. Press Enter twice to finish")
+        print("3. Get your optimized resume!")
+        
+        print("\n" + "-" * 50)
+        print("PASTE JOB DESCRIPTION:")
+        
+        # Read job description
+        lines = []
+        empty_count = 0
+        
+        while True:
+            try:
+                line = input()
+                if line.strip() == "":
+                    empty_count += 1
+                    if empty_count >= 2:
+                        break
+                else:
+                    empty_count = 0
+                lines.append(line)
+            except KeyboardInterrupt:
+                print("\n\nExiting...")
+                return
+        
+        job_description = "\n".join(lines).strip()
+        
+        if not job_description:
+            print("❌ No job description provided")
+            return
+        
+        # Optional job title
+        job_title = input("\nJob title (optional): ").strip()
+    
+    # Initialize optimizer
     optimizer = ResumeOptimizer()
     if not optimizer.sections:
         return
-    
-    print("\n📋 Instructions:")
-    print("1. Paste your job description below")
-    print("2. Press Enter twice to finish")
-    print("3. Get your optimized resume!")
-    
-    print("\n" + "-" * 50)
-    print("PASTE JOB DESCRIPTION:")
-    
-    # Read job description
-    lines = []
-    empty_count = 0
-    
-    while True:
-        try:
-            line = input()
-            if line.strip() == "":
-                empty_count += 1
-                if empty_count >= 2:
-                    break
-            else:
-                empty_count = 0
-            lines.append(line)
-        except KeyboardInterrupt:
-            print("\n\nExiting...")
-            return
-    
-    job_description = "\n".join(lines).strip()
-    
-    if not job_description:
-        print("❌ No job description provided")
-        return
-    
-    # Optional job title
-    job_title = input("\nJob title (optional): ").strip()
     
     # Generate resume
     try:
@@ -432,6 +455,39 @@ def main():
         
     except Exception as e:
         print(f"❌ Error: {e}")
+
+def read_job_from_quick_optimizer():
+    """Read job description and title from quick_optimizer.py"""
+    try:
+        with open('quick_optimizer.py', 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Extract job description
+        job_desc_match = re.search(r'job_description\s*=\s*"""(.*?)"""', content, re.DOTALL)
+        if job_desc_match:
+            job_description = job_desc_match.group(1).strip()
+        else:
+            return None, None
+        
+        # Extract job title
+        job_title_match = re.search(r'job_title\s*=\s*["\']([^"\']+)["\']', content)
+        if job_title_match:
+            job_title = job_title_match.group(1).strip()
+        else:
+            job_title = ""
+        
+        print(f"📖 Read job description from quick_optimizer.py")
+        print(f"🎯 Job Title: {job_title}")
+        print(f"📝 Description length: {len(job_description)} characters")
+        
+        return job_description, job_title
+        
+    except FileNotFoundError:
+        print("📖 quick_optimizer.py not found, using interactive mode")
+        return None, None
+    except Exception as e:
+        print(f"📖 Error reading quick_optimizer.py: {e}")
+        return None, None
 
 if __name__ == "__main__":
     main()

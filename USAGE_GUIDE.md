@@ -32,9 +32,9 @@ python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 
 ## 📝 How to Use
 
-### Method 1: Edit and Run (Recommended)
+### Method 1: Edit Configuration and Run (Recommended)
 
-1. **Open the optimizer file:**
+1. **Open the job configuration file:**
    ```bash
    # Open in your preferred editor
    code quick_optimizer.py  # VS Code
@@ -44,26 +44,27 @@ python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
    open quick_optimizer.py  # Default editor
    ```
 
-2. **Replace the job description** (lines 45-75):
+2. **Replace the job description** (lines 15-45):
    ```python
-   job_description = """Your Role
-   As a Software Engineer you will be responsible for building...
+   job_description = """Key Responsibilities:
    
-   You Will
-   Design and build highly reliable and resilient products...
+   Modify configurations, utilities, software default settings...
    
-   Qualifications
-   Pursuing a BS or MS in Computer Science..."""
+   Required Qualifications:
+   Cisco Certified Network Associate or 2-3 years relevant work experience...
+   
+   Preferred Qualifications:
+   Other Cisco Certified Associate Certificates..."""
    ```
 
-3. **Update the job title** (line 76):
+3. **Update the job title** (line 47):
    ```python
-   job_title = "Software Engineer"  # Change this
+   job_title = "Network Engineer I"  # Change this
    ```
 
 4. **Run the optimizer:**
    ```bash
-   source .venv/bin/activate && python quick_optimizer.py
+   source .venv/bin/activate && python resume_optimizer.py
    ```
 
 5. **Get your optimized resume:**
@@ -168,7 +169,7 @@ source .venv/bin/activate && python quick_optimizer.py
 
 ```
 resume-optimizer/
-├── quick_optimizer.py          # Main optimizer (edit this)
+├── quick_optimizer.py          # Job configuration (edit this)
 ├── resume_optimizer.py         # Core optimization engine
 ├── requirements.txt            # Python dependencies
 ├── USAGE_GUIDE.md             # This guide

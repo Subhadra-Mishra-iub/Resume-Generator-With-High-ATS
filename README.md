@@ -36,7 +36,7 @@ python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 
 ### Usage
 1. **Edit job description**: Open `quick_optimizer.py` and replace the job description
-2. **Run optimizer**: `python quick_optimizer.py`
+2. **Run optimizer**: `python resume_optimizer.py`
 3. **Get resume**: Upload generated `.tex` file to [Overleaf](https://overleaf.com)
 4. **Compile to PDF**: Ready for job applications!
 
@@ -44,7 +44,7 @@ python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 
 ```
 resume-optimizer/
-├── quick_optimizer.py      # Main interface (edit this)
+├── quick_optimizer.py      # Job configuration (edit this)
 ├── resume_optimizer.py     # Core optimization engine
 ├── requirements.txt        # Dependencies
 ├── USAGE_GUIDE.md         # Detailed usage instructions
